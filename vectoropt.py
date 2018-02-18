@@ -24,7 +24,7 @@ def create_idf_vector(incidence_mat, N):
 	idf_vector = list()
 	for term, doc_stats in incidence_mat.items():
 		doc_freq = len(doc_stats)	# No of docs that contain term
-		idf_vector.append(log(N / (1 + doc_freq)))
+		idf_vector.append(log(N / (doc_freq)))
 
 	return idf_vector
 
@@ -39,7 +39,7 @@ def convert_to_unit(vector):
 
 	return unit_vector
 
-def unit_cosine(v1, v2):
+def unit_cosine_calc(v1, v2):
 	'''
 	Calculates cosine between two unit vectors
 	'''

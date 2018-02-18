@@ -3,6 +3,7 @@ Functions to create, edit and update index / incidence matrix
 '''
 import json
 import copy
+from collections import OrderedDict
 from vectoropt import *
 from spacywrapper import SWrapper
 from nltk.tokenize import sent_tokenize
@@ -84,10 +85,11 @@ def create_mappings(doc_list):
 	'''
 	doc_mappings = dict()
 
-	for index, doc in enumerate(doc_list):
+	for index, document in enumerate(doc_list):
 		
 		# Each doc aliased by a doc Id, as DOC#
-		doc_mappings[doc] = 'DOC' + str(index)
+		doc_id = 'DOC' + str(index)
+		doc_mappings[doc_id] = document
 
 	return doc_mappings
 
@@ -102,18 +104,22 @@ def init_engine(doc_list):
 
 	# Initiate indexing
 	doc_mappings = create_mappings(doc_list)
-	for document, doc_id in doc_mappings.items():
+	for doc_id, document in doc_mappings.items():
 		
 		# Check if it is a file
 		if any([x in document for x in file_ext]):
 			document = readfile(document)
 
 		doc_words = linguistic_model(document)
+
 		# Adding to doc_vectors to be used later while creating vectors 
 		doc_vectors[doc_id] = doc_words
 
 		# Incidence Matrix creation
 		incidence_mat = incidence_update(incidence_mat, doc_id, doc_words)
+
+	# Ordering incidence matrix before vector creation
+	incidence_mat = OrderedDict(sorted(incidence_mat.items()))
 
 	# Creating vectors for documents in the system
 	temp = copy.deepcopy(doc_vectors)
