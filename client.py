@@ -33,7 +33,7 @@ def query_vector_creation(incidence_mat, query, N):
 
 	return unit_vector
 
-def add_document(document):
+def add_document(documents):
 	'''
 	Adding new document to IR system. Can pe path to text file or text itself
 	'''
@@ -45,12 +45,14 @@ def add_document(document):
 		doc_mappings = json.load(inpfile)
 
 	doc_list.extend(doc_mappings.values())
-	doc_list.append(document)
+	doc_list.extend(documents)
+
+	print ('Document(s) Added :D')
 
 	# Updating the entire system
 	init_engine(doc_list)
 
-def del_document(doc_id):
+def del_document(doc_ids):
 	'''
 	Enter doc_id to delete document
 	'''
@@ -60,13 +62,16 @@ def del_document(doc_id):
 	with open('data/document_mappings.json') as inpfile:
 		doc_mappings = json.load(inpfile)
 
-	if doc_id not in doc_mappings:
-		print ('Invalid Document ID :(')
-	else:
-		doc_list = [doc_mappings[x] for x in doc_mappings.keys() if x != doc_id]
+	for doc_id in doc_ids:
+		if doc_id not in doc_mappings:
+			print ('Invalid Document ID :(')
+		else:
+			doc_list = [doc_mappings[x] for x in doc_mappings.keys() if x != doc_id]
 
-		# Updating the entire system
-		init_engine(doc_list)
+			print ('Document(s) Deleted :D')
+			
+			# Updating the entire system
+			init_engine(doc_list)
 
 def compare_docs(doc_id1, doc_id2):
 	'''
@@ -136,10 +141,10 @@ if __name__ == '__main__':
 	# -> After initializing IR System
 
 	# To add new doc to the system
-	# add_document('test/test4.txt')
+	# add_document(['test/test4.txt'])
 
 	# To del a doc from system using doc_id
-	# del_document('DOC4')
+	# del_document(['DOC4'])
 
 	# To compare similaity between two docs using doc_ids
 	# compare_docs('DOC4','DOC1')
