@@ -2,6 +2,8 @@
 Functions to create, edit and update index / incidence matrix
 '''
 import json
+import copy
+from vectoropt import *
 from spacywrapper import SWrapper
 from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
@@ -36,23 +38,17 @@ def linguistic_model(document):
 
 	return cleaned_words
 
-
 def incidence_update(incidence_mat, doc_id, doc_words):
 	'''
-	Creates / Updates incidence matrix : {term:[df,{docid:tf,}]}
+	Creates / Updates incidence matrix : {term:{docid:tf,}}
 	'''
 	for term in doc_words:
-		if term in incidence_mat:
-			# Term already exists
-			# Add to document frequency
-			incidence_mat[term][0] += 1
-
-		else:
+		if term not in incidence_mat:
 			# New term added
-			incidence_mat[term] = [1,dict()]
+			incidence_mat[term] = dict()
 
 		# Identifying document
-		doc_stat = incidence_mat[term][1]
+		doc_stat = incidence_mat[term]
 
 		if doc_id in doc_stat:
 			# Document already exists
@@ -62,10 +58,9 @@ def incidence_update(incidence_mat, doc_id, doc_words):
 			doc_stat[doc_id] = 1
 
 		# Updating document stats
-		incidence_mat[term][1] = doc_stat
+		incidence_mat[term] = doc_stat
 
 	return incidence_mat
-
 
 def readfile(filename):
 	'''
@@ -76,14 +71,12 @@ def readfile(filename):
 
 	return data
 
-
 def writejson(outfile_name, data):
  	'''
  	Dumps data into json file
  	'''
  	with open(outfile_name,'w') as outfile:
  		json.dump(data, outfile, indent=4)
-
 
 def create_mappings(doc_list):
 	'''
@@ -98,14 +91,14 @@ def create_mappings(doc_list):
 
 	return doc_mappings
 
-
-def initialize(doc_list):
+def init_engine(doc_list):
 	'''
 	Creates index, document mappings and vectors
 	'''
 	file_ext = ['.txt','.md']
 	incidence_mat = dict()
 	doc_mappings = dict()
+	doc_vectors = dict()
 
 	# Initiate indexing
 	doc_mappings = create_mappings(doc_list)
@@ -116,18 +109,32 @@ def initialize(doc_list):
 			document = readfile(document)
 
 		doc_words = linguistic_model(document)
+		# Adding to doc_vectors to be used later while creating vectors 
+		doc_vectors[doc_id] = doc_words
+
+		# Incidence Matrix creation
 		incidence_mat = incidence_update(incidence_mat, doc_id, doc_words)
+
+	# Creating vectors for documents in the system
+	temp = copy.deepcopy(doc_vectors)
+	for doc_id, doc_words in temp.items():
+		tf_vector = create_tf_vector(incidence_mat, doc_words)
+		unit_vector = convert_to_unit(tf_vector)
+		doc_vectors[doc_id] = unit_vector
 
 	# Writing mappings on disk
 	writejson('data/document_mappings.json',doc_mappings)
 
+	# Writing vectors on disk
+	writejson('data/document_vectors.json',doc_vectors)
+
 	# Writing incidnce matrix on disk
 	writejson('data/incidence_matrix.json',incidence_mat)
 
-	print ('Index & Mappings successfully created/updated :)')
+	print ('Index, Vectors & Mappings successfully created/updated :)')
 
 
 if __name__ == '__main__':
-	documents = ['test/test3.txt',"Hiya, Even this would work well"]
 	# Can enter both files and text in this function
-	initialize(documents)
+	documents = ['Hey, what is happening?',"Is this really going to happen?"]
+	init_engine(documents)
