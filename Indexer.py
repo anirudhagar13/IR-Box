@@ -18,7 +18,7 @@ def linguistic_model(document):
 	document = document.lower()
 
 	# Removing forbidden items
-	forbidden_list = ["'s","-"]
+	forbidden_list = ["'s","-",","]
 	for x in forbidden_list:
 		if x in document:
 			document = document.replace(x,'')
@@ -128,6 +128,6 @@ def initialize(doc_list):
 
 
 if __name__ == '__main__':
-	documents = ['test3.txt',"Isn't this your shit's happening happen happens? Fuck this shizz! * Hola Q."]
+	documents = ['test/test3.txt',"Hiya, Even this would work well"]
 	# Can enter both files and text in this function
 	initialize(documents)
