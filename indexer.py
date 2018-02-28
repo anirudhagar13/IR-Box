@@ -26,6 +26,12 @@ def linguistic_model(document):
 		if x in document:
 			document = document.replace(x,'')
 
+	# Replace items with space
+	forbidden_list = ["_"]
+	for x in forbidden_list:
+		if x in document:
+			document = document.replace(x,' ')
+
 	sentences = sent_tokenize(document)
 	for inp_sent in sentences:
 		temp = list()

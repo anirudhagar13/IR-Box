@@ -13,8 +13,8 @@ def relevant_K_bucket(doc_vectors, query_vector, K):
 		cos_score = unit_cosine_calc(doc_vector, query_vector)
 		doc_score[doc_id] = cos_score
 
-	# Arranging list as per score
-	doc_bucket = sorted(doc_score, key=doc_score.get, reverse=True)
+	# Arranging dictionary as per score
+	doc_bucket = [[x,doc_score[x]] for x in sorted(doc_score, key=doc_score.get, reverse=True)]
 
 	if K > len(doc_bucket):
 		return doc_bucket
@@ -127,7 +127,7 @@ def query_client():
 		k_bucket = relevant_K_bucket(doc_vectors, query_vector, 10)
 		
 		# Getting actual documents from doc_ids in decreasing order of relevance
-		relevant_docs = [doc_mappings[x] for x in k_bucket]
+		relevant_docs = [[doc_mappings[x[0]],x[1]] for x in k_bucket]
 		print ('\nFollowing are documents in decreasing order of relevance : \n>>', relevant_docs)
 
 
@@ -150,4 +150,4 @@ if __name__ == '__main__':
 	# compare_docs('DOC4','DOC1')
 	
 	# To query System
-	query_client()
+	# query_client()

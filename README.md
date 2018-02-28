@@ -12,6 +12,7 @@ A python based IR retrieval system that leverages vector space model and TF-IDF
 	- When searching for query, it uses already created index to give top-k relevancy answer 
 	- Uses tf-idf score as weights in vector space model
 	- Run client.py file to interact with the system. Uncommenet whatever functionality that needs to be used.
+	- Based on (https://www.youtube.com/watch?v=PhunzHqhKoQ) by Dan Jurafsky
 
 ~ Features:
 	- Query search = returns most relevant documents in k-bucket size of which can be altered
