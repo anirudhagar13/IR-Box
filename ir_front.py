@@ -150,4 +150,4 @@ if __name__ == '__main__':
 	# compare_docs('DOC4','DOC1')
 	
 	# To query System
-	# query_client()
+	query_client()
