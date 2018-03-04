@@ -1,5 +1,6 @@
 '''
 To create vectors and perform operations 
+Most operation depend on incidence matrix with format { word : { docid : wordfreq } }
 '''
 from math import log
 
@@ -22,9 +23,9 @@ def create_idf_vector(incidence_mat, N):
 	N - Total documents in the system
 	'''
 	idf_vector = list()
-	for term, doc_stats in incidence_mat.items():
-		doc_freq = len(doc_stats)	# No of docs that contain term
-		idf_vector.append(log(N / (doc_freq)))
+	for term, class_stats in incidence_mat.items():
+		class_freq = len(class_stats)	# No of classes that contain term
+		idf_vector.append(log(N / (class_freq)))
 
 	return idf_vector
 
@@ -34,8 +35,11 @@ def convert_to_unit(vector):
 	'''
 	unit_vector = list()
 	vector_mag = (sum([x ** 2 for x in vector])) ** 0.5
-	for dim in vector:
-		unit_vector.append(dim / vector_mag)
+	if vector_mag == 0:
+		unit_vector = [0] * len(vector)
+	else:
+		for dim in vector:
+			unit_vector.append(dim / vector_mag)
 
 	return unit_vector
 
